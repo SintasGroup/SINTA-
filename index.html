@@ -1,0 +1,451 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sinta | Modern Elegance</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind Config for Custom Fonts & Colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        stone: {
+                            50: '#fafaf9',
+                            100: '#f5f5f4',
+                            200: '#e7e5e4',
+                            800: '#292524',
+                            900: '#1c1917',
+                        },
+                        accent: '#a3b18a', // Soft sage green
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Smooth scrolling */
+        html { scroll-behavior: smooth; }
+        
+        /* Hide scrollbar for horizontal scrolling areas */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        
+        /* Image hover zoom effect */
+        .img-zoom-container {
+            overflow: hidden;
+        }
+        .img-zoom {
+            transition: transform 0.5s ease;
+        }
+        .img-zoom-container:hover .img-zoom {
+            transform: scale(1.05);
+        }
+
+        /* Custom Toast Notification */
+        #toast {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s, bottom 0.3s, visibility 0.3s;
+        }
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+            bottom: 30px;
+        }
+    </style>
+</head>
+<body class="font-sans text-stone-900 bg-stone-50 antialiased selection:bg-stone-900 selection:text-white">
+
+    <!-- Announcement Bar -->
+    <div class="bg-stone-900 text-stone-50 text-xs md:text-sm text-center py-2 px-4 tracking-wide">
+        Complimentary shipping on all orders over $150. <a href="#" class="underline hover:text-stone-300 ml-1">Shop Now</a>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-stone-50/90 backdrop-blur-md border-b border-stone-200 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                
+                <!-- Mobile Menu Button -->
+                <div class="flex items-center md:hidden">
+                    <button type="button" onclick="toggleMobileMenu()" class="text-stone-900 hover:text-stone-600 focus:outline-none p-2">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+
+                <!-- Desktop Menu (Left) -->
+                <div class="hidden md:flex space-x-8 items-center flex-1">
+                    <a href="#new-arrivals" class="text-sm font-medium hover:text-stone-500 transition-colors">New In</a>
+                    <a href="#" class="text-sm font-medium hover:text-stone-500 transition-colors">Clothing</a>
+                    <a href="#" class="text-sm font-medium hover:text-stone-500 transition-colors">Accessories</a>
+                    <a href="#editorial" class="text-sm font-medium hover:text-stone-500 transition-colors">Journal</a>
+                </div>
+
+                <!-- Logo (Center) -->
+                <div class="flex-shrink-0 flex items-center justify-center flex-1 md:flex-none">
+                    <a href="#" class="font-serif text-3xl md:text-4xl tracking-tighter font-semibold">Sinta.</a>
+                </div>
+
+                <!-- Icons (Right) -->
+                <div class="flex items-center space-x-4 md:space-x-6 flex-1 justify-end">
+                    <button class="text-stone-900 hover:text-stone-500 transition-colors hidden sm:block">
+                        <i data-lucide="search" class="w-5 h-5"></i>
+                    </button>
+                    <button class="text-stone-900 hover:text-stone-500 transition-colors hidden sm:block">
+                        <i data-lucide="user" class="w-5 h-5"></i>
+                    </button>
+                    <button class="text-stone-900 hover:text-stone-500 transition-colors relative group">
+                        <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                        <span id="cart-count" class="absolute -top-2 -right-2 bg-stone-900 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Panel (Hidden by default) -->
+        <div id="mobile-menu" class="fixed inset-0 z-40 bg-stone-50 hidden flex-col pt-24 px-6 pb-6 h-screen overflow-y-auto">
+            <button onclick="toggleMobileMenu()" class="absolute top-6 left-6 text-stone-900 p-2">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <div class="flex flex-col space-y-6 mt-8">
+                <a href="#new-arrivals" onclick="toggleMobileMenu()" class="font-serif text-3xl border-b border-stone-200 pb-4">New In</a>
+                <a href="#" class="font-serif text-3xl border-b border-stone-200 pb-4">Clothing</a>
+                <a href="#" class="font-serif text-3xl border-b border-stone-200 pb-4">Accessories</a>
+                <a href="#editorial" onclick="toggleMobileMenu()" class="font-serif text-3xl border-b border-stone-200 pb-4">Journal</a>
+            </div>
+            <div class="mt-auto pt-10 flex space-x-6">
+                <a href="#" class="flex items-center text-sm font-medium"><i data-lucide="user" class="w-4 h-4 mr-2"></i> Account</a>
+                <a href="#" class="flex items-center text-sm font-medium"><i data-lucide="search" class="w-4 h-4 mr-2"></i> Search</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative h-[85vh] w-full bg-stone-200 flex items-center justify-center">
+        <!-- Hero Image -->
+        <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2070&auto=format&fit=crop" 
+             alt="Fashion model wearing Sinta collection" 
+             class="absolute inset-0 w-full h-full object-cover object-[center_30%]">
+        
+        <!-- Dark Overlay for text readability -->
+        <div class="absolute inset-0 bg-stone-900/30"></div>
+
+        <!-- Hero Content -->
+        <div class="relative z-10 text-center px-4 max-w-3xl mx-auto mt-16">
+            <span class="block text-white text-sm md:text-base uppercase tracking-[0.2em] mb-4 drop-shadow-md">The Spring Collection</span>
+            <h1 class="font-serif text-5xl md:text-7xl lg:text-8xl text-white mb-6 drop-shadow-lg leading-tight">Elegance in <br/>Every Thread.</h1>
+            <a href="#new-arrivals" class="inline-block bg-white text-stone-900 px-8 py-3.5 text-sm md:text-base font-medium uppercase tracking-wider hover:bg-stone-900 hover:text-white transition-colors duration-300">
+                Discover the Collection
+            </a>
+        </div>
+    </section>
+
+    <!-- Marquee / Value Prop -->
+    <div class="border-y border-stone-200 overflow-hidden py-4 bg-white">
+        <div class="whitespace-nowrap flex items-center justify-between px-4 max-w-7xl mx-auto space-x-8 text-sm md:text-base text-stone-600">
+            <span class="flex items-center"><i data-lucide="leaf" class="w-4 h-4 mr-2 text-accent"></i> Sustainable Fabrics</span>
+            <span class="hidden md:flex items-center"><i data-lucide="scissors" class="w-4 h-4 mr-2 text-accent"></i> Ethical Tailoring</span>
+            <span class="flex items-center"><i data-lucide="globe" class="w-4 h-4 mr-2 text-accent"></i> Worldwide Shipping</span>
+            <span class="hidden sm:flex items-center"><i data-lucide="rotate-ccw" class="w-4 h-4 mr-2 text-accent"></i> 30-Day Returns</span>
+        </div>
+    </div>
+
+    <!-- New Arrivals Grid -->
+    <section id="new-arrivals" class="py-20 md:py-32 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row md:justify-between md:items-end mb-12">
+            <div>
+                <h2 class="font-serif text-3xl md:text-4xl mb-3">New Arrivals</h2>
+                <p class="text-stone-500 max-w-md">Curated pieces designed for the modern wardrobe. Effortless, timeless, and impeccably crafted.</p>
+            </div>
+            <a href="#" class="hidden md:inline-block border-b border-stone-900 pb-1 text-sm uppercase tracking-wider font-medium hover:text-stone-500 transition-colors">Shop All</a>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
+            
+            <!-- Product 1 -->
+            <div class="group relative flex flex-col">
+                <div class="img-zoom-container relative aspect-[3/4] w-full bg-stone-200 mb-4 rounded-sm">
+                    <img src="https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=800&q=80" alt="Silk Midi Dress" class="img-zoom absolute inset-0 w-full h-full object-cover">
+                    <!-- Quick Add Button -->
+                    <div class="absolute bottom-4 left-0 right-0 px-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <button onclick="addToCart('Silk Midi Dress')" class="w-full bg-white/95 backdrop-blur text-stone-900 py-3 text-sm font-medium uppercase tracking-wide hover:bg-stone-900 hover:text-white transition-colors shadow-sm">
+                            Add to Bag
+                        </button>
+                    </div>
+                </div>
+                <div class="flex justify-between items-start mt-2">
+                    <div>
+                        <h3 class="text-base font-medium text-stone-900"><a href="#">Silk Midi Dress</a></h3>
+                        <p class="text-sm text-stone-500 mt-1">Ivory</p>
+                    </div>
+                    <p class="text-base font-medium text-stone-900">$185</p>
+                </div>
+            </div>
+
+            <!-- Product 2 -->
+            <div class="group relative flex flex-col">
+                <div class="img-zoom-container relative aspect-[3/4] w-full bg-stone-200 mb-4 rounded-sm">
+                    <img src="https://images.unsplash.com/photo-1591369822096-114cb1951cdd?auto=format&fit=crop&w=800&q=80" alt="Tailored Linen Blazer" class="img-zoom absolute inset-0 w-full h-full object-cover">
+                    <div class="absolute bottom-4 left-0 right-0 px-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <button onclick="addToCart('Tailored Linen Blazer')" class="w-full bg-white/95 backdrop-blur text-stone-900 py-3 text-sm font-medium uppercase tracking-wide hover:bg-stone-900 hover:text-white transition-colors shadow-sm">
+                            Add to Bag
+                        </button>
+                    </div>
+                </div>
+                <div class="flex justify-between items-start mt-2">
+                    <div>
+                        <h3 class="text-base font-medium text-stone-900"><a href="#">Tailored Linen Blazer</a></h3>
+                        <p class="text-sm text-stone-500 mt-1">Oatmeal</p>
+                    </div>
+                    <p class="text-base font-medium text-stone-900">$240</p>
+                </div>
+            </div>
+
+            <!-- Product 3 -->
+            <div class="group relative flex flex-col">
+                <div class="img-zoom-container relative aspect-[3/4] w-full bg-stone-200 mb-4 rounded-sm">
+                    <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80" alt="Pleated Wide-Leg Pants" class="img-zoom absolute inset-0 w-full h-full object-cover">
+                    <div class="absolute top-3 left-3 bg-stone-900 text-white text-xs px-2 py-1 uppercase tracking-wider">Bestseller</div>
+                    <div class="absolute bottom-4 left-0 right-0 px-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <button onclick="addToCart('Pleated Wide-Leg Pants')" class="w-full bg-white/95 backdrop-blur text-stone-900 py-3 text-sm font-medium uppercase tracking-wide hover:bg-stone-900 hover:text-white transition-colors shadow-sm">
+                            Add to Bag
+                        </button>
+                    </div>
+                </div>
+                <div class="flex justify-between items-start mt-2">
+                    <div>
+                        <h3 class="text-base font-medium text-stone-900"><a href="#">Pleated Wide-Leg Pants</a></h3>
+                        <p class="text-sm text-stone-500 mt-1">Black</p>
+                    </div>
+                    <p class="text-base font-medium text-stone-900">$160</p>
+                </div>
+            </div>
+
+            <!-- Product 4 -->
+            <div class="group relative flex flex-col">
+                <div class="img-zoom-container relative aspect-[3/4] w-full bg-stone-200 mb-4 rounded-sm">
+                    <img src="https://images.unsplash.com/photo-1434389678369-e840cb5a8810?auto=format&fit=crop&w=800&q=80" alt="Ribbed Knit Top" class="img-zoom absolute inset-0 w-full h-full object-cover">
+                    <div class="absolute bottom-4 left-0 right-0 px-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <button onclick="addToCart('Ribbed Knit Top')" class="w-full bg-white/95 backdrop-blur text-stone-900 py-3 text-sm font-medium uppercase tracking-wide hover:bg-stone-900 hover:text-white transition-colors shadow-sm">
+                            Add to Bag
+                        </button>
+                    </div>
+                </div>
+                <div class="flex justify-between items-start mt-2">
+                    <div>
+                        <h3 class="text-base font-medium text-stone-900"><a href="#">Ribbed Knit Top</a></h3>
+                        <p class="text-sm text-stone-500 mt-1">Charcoal</p>
+                    </div>
+                    <p class="text-base font-medium text-stone-900">$85</p>
+                </div>
+            </div>
+
+        </div>
+        
+        <div class="mt-12 text-center md:hidden">
+             <a href="#" class="inline-block border border-stone-900 text-stone-900 px-8 py-3 text-sm uppercase tracking-wider font-medium hover:bg-stone-900 hover:text-white transition-colors w-full sm:w-auto">Shop All Arrivals</a>
+        </div>
+    </section>
+
+    <!-- Editorial / About Section -->
+    <section id="editorial" class="bg-stone-200">
+        <div class="grid grid-cols-1 lg:grid-cols-2">
+            <!-- Image Side -->
+            <div class="relative h-[50vh] lg:h-auto min-h-[500px]">
+                <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1200&q=80" alt="Sinta Editorial" class="absolute inset-0 w-full h-full object-cover">
+            </div>
+            
+            <!-- Text Side -->
+            <div class="flex flex-col justify-center px-6 py-20 md:px-16 lg:px-24">
+                <span class="uppercase tracking-widest text-sm text-stone-500 mb-6">Our Philosophy</span>
+                <h2 class="font-serif text-3xl md:text-5xl mb-8 leading-tight">Artisan crafted. <br/>Intentionally designed.</h2>
+                <p class="text-stone-600 mb-8 text-lg leading-relaxed font-light">
+                    At Sinta, we believe that true elegance lies in simplicity and quality. Every garment is thoughtfully designed in our studio and crafted from premium, sustainably sourced materials to ensure it lasts beyond the season. We create modern uniforms for the contemporary woman.
+                </p>
+                <div>
+                    <a href="#" class="inline-flex items-center text-sm uppercase tracking-wider font-medium text-stone-900 hover:text-stone-500 transition-colors group border-b border-stone-900 pb-1">
+                        Read Our Story <i data-lucide="arrow-right" class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="py-24 bg-white border-b border-stone-100 text-center px-4">
+        <div class="max-w-2xl mx-auto">
+            <h2 class="font-serif text-3xl mb-4">Join the Sinta Club</h2>
+            <p class="text-stone-500 mb-8 font-light">Subscribe to receive updates, access to exclusive deals, and 10% off your first order.</p>
+            
+            <form onsubmit="handleSubscribe(event)" class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+                <input type="email" placeholder="Enter your email address" required class="flex-1 px-4 py-3 border border-stone-300 focus:outline-none focus:border-stone-900 focus:ring-1 focus:ring-stone-900 bg-stone-50 rounded-none placeholder:font-light">
+                <button type="submit" class="bg-stone-900 text-white px-8 py-3 uppercase tracking-wider text-sm font-medium hover:bg-stone-800 transition-colors">
+                    Subscribe
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-stone-50 pt-20 pb-10 px-4 sm:px-6 lg:px-8 border-t border-stone-200">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+            
+            <!-- Brand Column -->
+            <div class="col-span-1 md:col-span-2 lg:col-span-1">
+                <a href="#" class="font-serif text-3xl font-semibold mb-6 block">Sinta.</a>
+                <p class="text-stone-500 text-sm mb-6 leading-relaxed">
+                    Elevating everyday essentials through meticulous design and sustainable craftsmanship.
+                </p>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-stone-400 hover:text-stone-900 transition-colors"><i data-lucide="instagram" class="w-5 h-5"></i></a>
+                    <a href="#" class="text-stone-400 hover:text-stone-900 transition-colors"><i data-lucide="twitter" class="w-5 h-5"></i></a>
+                    <a href="#" class="text-stone-400 hover:text-stone-900 transition-colors"><i data-lucide="facebook" class="w-5 h-5"></i></a>
+                </div>
+            </div>
+
+            <!-- Shop Links -->
+            <div>
+                <h4 class="font-medium text-stone-900 mb-6 uppercase tracking-wider text-sm">Shop</h4>
+                <ul class="space-y-4 text-sm text-stone-500">
+                    <li><a href="#" class="hover:text-stone-900 transition-colors">New Arrivals</a></li>
+                    <li><a href="#" class="hover:text-stone-900 transition-colors">Best Sellers</a></li>
+                    <li><a href="#" class="hover:text-stone-900 transition-colors">Dresses</a></li>
+                    <li><a href="#" class="hover:text-stone-900 transition-colors">Tops & Knitwear</a></li>
+                    <li><a href="#" class="hover:text-stone-900 transition-colors">Trousers</a></li>
+                </ul>
+            </div>
+
+            <!-- Help Links -->
+            <div>
+                <h4 class="font-medium text-stone-900 mb-6 uppercase tracking-wider text-sm">Help</h4>
+                <ul class="space-y-4 text-sm text-stone-500">
+                    <li><a href="#" class="hover:text-stone-900 transition-colors">FAQ</a></li>
+                    <li><a href="#" class="hover:text-stone-900 transition-colors">Shipping & Returns</a></li>
+                    <li><a href="#" class="hover:text-stone-900 transition-colors">Size Guide</a></li>
+                    <li><a href="#" class="hover:text-stone-900 transition-colors">Track Order</a></li>
+                    <li><a href="#" class="hover:text-stone-900 transition-colors">Contact Us</a></li>
+                </ul>
+            </div>
+
+            <!-- About Links -->
+            <div>
+                <h4 class="font-medium text-stone-900 mb-6 uppercase tracking-wider text-sm">About</h4>
+                <ul class="space-y-4 text-sm text-stone-500">
+                    <li><a href="#" class="hover:text-stone-900 transition-colors">Our Story</a></li>
+                    <li><a href="#" class="hover:text-stone-900 transition-colors">Sustainability</a></li>
+                    <li><a href="#" class="hover:text-stone-900 transition-colors">Careers</a></li>
+                    <li><a href="#" class="hover:text-stone-900 transition-colors">Terms of Service</a></li>
+                    <li><a href="#" class="hover:text-stone-900 transition-colors">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto border-t border-stone-200 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-stone-400">
+            <p>&copy; 2026 Sinta Fashion. All rights reserved.</p>
+            <div class="mt-4 md:mt-0 flex space-x-4">
+                <span>USD ($)</span>
+                <span>English</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification Element -->
+    <div id="toast" class="fixed left-1/2 transform -translate-x-1/2 z-50 bg-stone-900 text-white px-6 py-3 rounded-sm shadow-xl flex items-center space-x-3 text-sm">
+        <i data-lucide="check-circle-2" class="w-5 h-5 text-accent"></i>
+        <span id="toast-message">Added to cart successfully</span>
+    </div>
+
+    <!-- Interactive Scripts -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Mobile Menu Toggle Logic
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        function toggleMobileMenu() {
+            if (mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.remove('hidden');
+                mobileMenu.classList.add('flex');
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            } else {
+                mobileMenu.classList.add('hidden');
+                mobileMenu.classList.remove('flex');
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Cart Logic & Toast Notification
+        let cartCount = 0;
+        const cartBadge = document.getElementById('cart-count');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
+        let toastTimeout;
+
+        function addToCart(productName) {
+            // Update counter
+            cartCount++;
+            cartBadge.textContent = cartCount;
+            
+            // Animation for badge
+            cartBadge.classList.add('scale-125');
+            setTimeout(() => cartBadge.classList.remove('scale-125'), 200);
+
+            // Show Toast
+            toastMessage.textContent = `${productName} added to bag`;
+            toast.classList.add('show');
+            toast.style.bottom = '40px';
+
+            // Hide Toast after 3 seconds
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+                toast.style.bottom = '30px';
+            }, 3000);
+        }
+
+        // Handle Newsletter Subscription (Dummy logic)
+        function handleSubscribe(e) {
+            e.preventDefault();
+            const input = e.target.querySelector('input[type="email"]');
+            const btn = e.target.querySelector('button');
+            
+            const originalText = btn.textContent;
+            btn.textContent = 'Subscribed ✓';
+            btn.classList.add('bg-accent', 'text-stone-900');
+            input.value = '';
+            
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.classList.remove('bg-accent', 'text-stone-900');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
+
+```
